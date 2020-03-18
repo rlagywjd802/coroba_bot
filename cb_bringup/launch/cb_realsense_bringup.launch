@@ -1,0 +1,19 @@
+<launch>
+	<arg name="camera1" 	default="false"/>
+	<arg name="camera2" 	default="false"/>
+
+	<!-- sid-facing (fixed) -->
+	<include if="$(arg camera1)" file="$(find realsense2_camera)/launch/rs_camera.launch">
+		<arg name="camera" 		value="realsense1"/>
+		<!-- <arg name="serial_no"	value="923322071323"/> -->
+		<arg name="filters" 	value="pointcloud"/>
+	</include>
+
+	<!-- on the arm -->
+	<include if="$(arg camera2)" file="$(find realsense2_camera)/launch/rs_camera.launch">
+		<arg name="camera" 		value="realsense2"/>
+		<!-- <arg name="serial_no"	value="840412060409"/> -->
+		<arg name="filters" 	value="pointcloud"/>
+	</include>
+
+</launch>

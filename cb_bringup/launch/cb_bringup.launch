@@ -1,0 +1,35 @@
+<launch>
+	<arg name="base_device" 		default="/dev/ttyACM1"/>
+	<arg name="gripper_device"	default="/dev/ttyUSBgripper"/>
+
+	<!-- cameras -->
+	<include file="$(find cb_bringup)/launch/cb_realsense_bringup.launch">
+		<arg name="camera2" value="true"/>
+	</include>
+
+	<!-- base -->
+  <node name="cb_odom_publisher" pkg="cb_bringup" type="base_odom_publisher.py" args="$(arg base_device)" respawn="true"/>
+
+	<!-- arm -->
+	<include file="$(find cb_bringup)/launch/cb_ur5_driver.launch">
+		<arg name="robot_ip" 		value="192.168.2.2"/>
+	</include>
+
+	<!-- gripper -->
+	<include file="$(find cb_bringup)/launch/cb_gripper_bringup.launch">
+		<arg name="device"		value="$(arg gripper_device)"/>
+	</include>
+
+	<!-- urdf -->
+	<include file="$(find cb_description)/launch/description.launch" />
+
+	<!-- joint state publisher -->
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+		<rosparam param="source_list">["/ur5/joint_states", "/robotiq/joint_states"]</rosparam>
+	</node>
+
+	<!-- robot state publisher -->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+
+</launch>
