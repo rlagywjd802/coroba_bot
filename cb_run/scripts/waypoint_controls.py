@@ -32,6 +32,7 @@ class WaypointsGUIControl():
         rospy.Subscriber("distance", Int32, self.distance_cb)
 
         rospy.Subscriber("clear_imarker", Bool, self.clear_imarker_cb)
+        rospy.Subscriber("remove_imarker", Bool, self.remove_imarker_cb)
 
         # Pubisher
         self.target_pose_br = tf.TransformBroadcaster()
@@ -280,10 +281,13 @@ class WaypointsGUIControl():
             rospy.loginfo("clear_imarker_cb| r_axis:{}, offset:{}, ".format(self.last_r_axis, self.last_offset)+print_pose(self.last_poses[0]))
             self.insert_gripper(0, self.last_poses[0], self.last_r_axis, self.last_offset)
 
-    def publish_step1(self):
-        if not self.is_published:
-            self.instruction_pub.publish(STEP1)
-            self.is_published = True
+    def remove_imarker_cb(self, msg):
+        if msg.data:
+            if self.num_of_wpt >= 1:
+                self.erase_waypoint()            
+                rospy.loginfo("remove_imarker_cb| r_axis:{}, offset:{}, ".format(self.last_r_axis, self.last_offset)+print_pose(self.last_poses[0]))
+            else:
+                rospy.loginfo("remove_imarker_cb| no imarker")
 
 def main(arg):
     if len(arg) > 1:
@@ -294,15 +298,7 @@ def main(arg):
 
     try:
         wgc = WaypointsGUIControl(log_level)
-        count = 0
-        
-        while not rospy.is_shutdown():
-            if(count > 10):
-                wgc.publish_step1()
-            # if wgc.num_of_wpt > 0:
-            #     wgc.update_tf()
-            count += 1
-            wgc.update_rate.sleep()
+        rospy.spin()
     except KeyboardInterrupt:
         return
 

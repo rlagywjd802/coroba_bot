@@ -6,7 +6,7 @@
   <visual>
     <origin rpy="0.0 0 0" xyz="0 0 0"/>
     <geometry>
-      <mesh filename="package://mm_description/meshes/gripper/robotiq_2f85_opened_combined_axis_mated.STL"/>
+      <mesh filename="package://cb_description/meshes/gripper/robotiq_2f85_opened_combined_axis_mated.STL"/>
     </geometry>
   </visual>
 </link>

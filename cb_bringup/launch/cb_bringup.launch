@@ -1,14 +1,18 @@
 <launch>
-	<arg name="base_device" 		default="/dev/ttyACM1"/>
+	<arg name="rviz"			default="false"/>
+
+	<arg name="base_device"		default="/dev/ttyACM1"/>
 	<arg name="gripper_device"	default="/dev/ttyUSBgripper"/>
 
 	<!-- cameras -->
 	<include file="$(find cb_bringup)/launch/cb_realsense_bringup.launch">
-		<arg name="camera2" value="true"/>
+		<arg name="camera1" value="true"/>
+		<!-- <arg name="camera2" value="true"/> -->
+		<!-- <arg name="camera3" value="true"/> -->
 	</include>
 
 	<!-- base -->
-  <node name="cb_odom_publisher" pkg="cb_bringup" type="base_odom_publisher.py" args="$(arg base_device)" respawn="true"/>
+	<!-- <node name="cb_odom_publisher" pkg="cb_bringup" type="base_odom_publisher.py" args="$(arg base_device)" respawn="true"/> -->
 
 	<!-- arm -->
 	<include file="$(find cb_bringup)/launch/cb_ur5_driver.launch">
@@ -29,7 +33,39 @@
 	</node>
 
 	<!-- robot state publisher -->
+	<node pkg="tf" type="static_transform_publisher" name="map_to_cb" args="0 0 0 0 0 0 /map /base_footprint 50" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
+	<!-- move group -->
+	<include file="$(find cb_moveit_config)/launch/cb_moveit_planning_execution.launch"/>
+
+	<!-- stitching -->
+	<!-- /realsesnse1/depth/color/points -> /pcl_fusion_node_color/pcl_fusion_node/fused_points -->
+	<node name="pcl_fusion_node_color" pkg="point_cloud_stitching_color" type="pcl_stitch_node_color">
+		<remap from="~input_point_cloud" to="/realsense1/depth/color/points" />
+		<param name="fusion_frame" 		value="base_footprint"/>
+		<rosparam param="bounding_box">[-2.0,2.0,-2.0,2.0,0.0,2.0]</rosparam>
+	</node>
+
+	<!-- capturing -->
+	<!-- /pcl_fusion_node_color/pcl_fusion_node/fused_points -> /captured_pcl -->
+	<node name="cb_gui_pcl_execution" pkg="cb_run" type="cb_gui_pcl_execution.py" output="screen">
+		<param name="captured_cloud_in"	value="/pcl_fusion_node_color/pcl_fusion_node/fused_points"/>
+	</node>
+
+	<!-- trimming -->
+	<!-- /captured_pcl -> /approximate_bb/cloud_trimmed -->
+  	<node pkg="tf" type="static_transform_publisher" name="map_to_pcl" args="0 0 0 0 0 0 1 map pcl 100" />
+  	<node name="approximate_bounding_box" pkg="approximate_bb" type="approximate_bounding_box" output="screen">
+		<remap from="~input_point_cloud" to="/captured_pcl" />
+		<param name="output_frame" value="pcl"/>
+		<param name="output_point_cloud" value="/captured_pcl" />
+		<param name="filename_global" value="/home/mm/cb_ws/src/mobile_disinfectant_rob/pc_to_mesh/data/test/test.pcd"/>
+  	</node>
+
+  	<!-- plan -->
+  	<rosparam command="load" file="$(find cvrg_path)/config/scan_prop_1.yaml"/>
+
+	<node if="$(arg rviz)" name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find cb_bringup)/rviz/bringup.rviz"/>
 
 </launch>

@@ -3,7 +3,7 @@
 <robot name="inspector_bot" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- Materials -->
-  <xacro:include filename="$(find mm_description)/urdf/common_properties.xacro" />
+  <xacro:include filename="$(find cb_description)/urdf/common_properties.xacro" />
 
   <!-- Base Size -->
   <xacro:property name="base_x_size" value="0.76" />
@@ -12,7 +12,8 @@
 
   <!-- Profile Size -->
   <xacro:property name="profile_size" value="0.04" />
-  <xacro:property name="profile_height1" value="${0.415+0.077}"/> <!-- camera -->
+  <xacro:property name="profile_left_height" value="0.2"/> <!-- camera -->
+  <xacro:property name="profile_right_height" value="0.7"/> <!-- camera -->
 
   <!-- Origin -->
   <xacro:property name="origin_x" value="0.025" />
@@ -142,31 +143,53 @@
     <origin xyz="${-wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
   </xacro:inspector_bot_wheel>
 
-  <!-- profile for side facing camera -->
-  <!-- <joint name="camera_profile_fixed_joint" type="fixed">
+  <!-- profile for side facing camera : left, right-->
+  <joint name="camera_profile_left_fixed_joint" type="fixed">
     <parent link="bare_base_link"/>
-    <child link="camera_profile"/>
-    <origin xyz="${-base_x_size/2 - profile_size/2} ${-base_y_size/2 + profile_size*1.5} ${base_center_height + base_z_size/2 + profile_height1/2}" rpy="0 0 0"/>
+    <child link="camera_profile_left"/>
+    <origin xyz="${-base_x_size/2 + profile_size/2} ${base_y_size/2 - profile_size/2} ${base_center_height + base_z_size/2 + profile_left_height/2}" rpy="0 0 0"/>
   </joint>
 
-  <link name="camera_profile">
+  <link name="camera_profile_left">
     <visual>
       <geometry>
-        <box size="${profile_size} ${profile_size} ${profile_height1}"/>
+        <box size="${profile_size} ${profile_size} ${profile_left_height}"/>
       </geometry>      
       <material name="black"/>
     </visual>
 
     <collision>
       <geometry>
-        <box size="${profile_size} ${profile_size} ${profile_height1}"/>
+        <box size="${profile_size} ${profile_size} ${profile_left_height}"/>
       </geometry>
       <material name="black"/>
     </collision>
-  </link> -->
+  </link>
+
+  <joint name="camera_profile_right_fixed_joint" type="fixed">
+    <parent link="bare_base_link"/>
+    <child link="camera_profile_right"/>
+    <origin xyz="${-base_x_size/2 + profile_size/2} ${-base_y_size/2 + profile_size/2} ${base_center_height + base_z_size/2 + profile_right_height/2}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="camera_profile_right">
+    <visual>
+      <geometry>
+        <box size="${profile_size} ${profile_size} ${profile_right_height}"/>
+      </geometry>      
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="${profile_size} ${profile_size} ${profile_right_height}"/>
+      </geometry>
+      <material name="black"/>
+    </collision>
+  </link>
 
   <!-- battery -->
-  <joint name="camera_profile_fixed_joint" type="fixed">
+  <joint name="battery_fixed_joint" type="fixed">
     <parent link="bare_base_link"/>
     <child link="battery_link"/>
     <origin xyz="${-base_x_size/2 + profile_size + battery_x_size/2} 0 ${base_center_height + base_z_size/2 + battery_z_size/2}" rpy="0 0 0"/>

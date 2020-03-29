@@ -1,0 +1,32 @@
+<launch>
+
+    <!-- ////////////////////////////////////////////////////////////// -->
+    <!-- <include file="$(find pc_to_mesh)/launch/pc_to_mesh.launch" /> -->
+    <!-- ////////////////////////////////////////////////////////////// -->
+    <!-- Read the parameter file -->
+    <rosparam command="load" file="$(find pc_to_mesh)/config/pc_to_mesh_1.yaml"/>
+
+    <!-- Launch the node which reads point cloud from a pcd file -->
+    <!-- <node pkg="pc_to_mesh" type="pub_ptCloud" name="ptCl_pub" output="screen"/> -->
+
+    <!-- Launch the service to convert pc to mesh -->
+    <!-- <node pkg="pc_to_mesh" type="greedy_projection" name="greedy_projection" output="screen"/> -->
+
+    <!-- ////////////////////////////////////////////////////////////// -->
+    <!-- <include file="$(find pc_to_mesh)/launch/viz_PC.launch" /> -->
+	<!-- ////////////////////////////////////////////////////////////// -->
+    <!-- <node pkg="rviz" name="pc_viz_rviz" type="rviz" args="$(find pc_to_mesh)/config/rviz_config.rviz" required="true"/> -->
+
+    <!-- <node pkg="tf" type="static_transform_publisher" name="map_T_world" args="0 0 0 0 0 0 /map /world 10" /> -->
+
+    <node pkg="pc_to_mesh" type="viz_node" name="viz_node" output="screen"/>
+
+    <node pkg="pc_to_mesh" type="sim_path" name="sim_path" output="screen"/>
+
+    <!-- ////////////////////////////////////////////////////////////// -->
+    <!-- <include file="$(find cvrg_path)/launch/cvrg_planner.launch"/> -->
+    <!-- ////////////////////////////////////////////////////////////// -->
+    <rosparam command="load" file="$(find cvrg_path)/config/scan_prop_1.yaml"/>
+    <!-- <node pkg="cvrg_path" name="cvrg_planner" type="gen_cvrg_plan" output="screen"/> -->
+
+</launch>

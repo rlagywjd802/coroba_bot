@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: cb_description
+    relative_path: urdf/cb.urdf.xacro
+    xacro_args: --inorder use_nominal_extrinsics:=true
+  SRDF:
+    relative_path: config/corona_bot.srdf
+  CONFIG:
+    author_name: hyojeong
+    author_email: rlagywjd802@gmail.com
+    generated_timestamp: 1585448239
