@@ -118,6 +118,8 @@ protected Q_SLOTS:
 
   int cvrgPlan();
 
+  void graspWand();
+
   void scanPlan();
 
   void scanExecute();
@@ -175,6 +177,7 @@ protected:
 
   QPushButton* btn_cvrg_plan_;
 
+  QPushButton* btn_grasp_wand_;
   QPushButton* btn_scanning_plan_;
   QPushButton* btn_scanning_execute_;
 
@@ -222,6 +225,12 @@ protected:
   RemoteReciever remote_reciever_;
 
   ros::NodeHandle nh_;
+
+  // Publisher
+  ros::Publisher grasp_wand_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/grasp_wand", 1);
+
+  ros::Publisher scan_plan_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/scanning_plan", 1);
+  ros::Publisher scan_execute_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/scanning_execute", 1);
 
   // Subscriber
   ros::Subscriber mb_status_subscriber_;

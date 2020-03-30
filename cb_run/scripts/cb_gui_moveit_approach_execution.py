@@ -24,25 +24,18 @@ from const import *
 
 from moveit_commander.conversions import list_to_pose_stamped
 
+# const
 DXYZ = 0.02
+JOINTS = ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint', 
+            'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']
+initial_joint_for_capture = d2r([-180.00, -74.67, -91.72, -82.35, 89.65, -270.21])
+initial_joint_for_scan = d2r([-180.00, -74.66, -91.72, -103.59, 89.65, -270.21])
+initial_quat_for_scan = Quaternion(x=-0.705435194018, y=-0.708766915, z=0.0012030846429, w=0.00303312227606)
+# pre_grasp_wand = [-0.234, -0.234, 0.98] # /base_footprint --> /tcp_gripper_closed
+wand_grasp_position = [-0.234, -0.154, 0.98] # /base_footprint --> /tcp_gripper_closed
 
-# const pose
-# home = [-173.13, -91.39, -100.71, 7.05, 77.55, -270.03]
-ready_for_sanitize = [-197.13, -85.20, -88.31, -96.46, 89.63, -287.35]
-# sanitize_quat = tf.transformations.quaternion_from_euler(math.pi, 0.0, 0.0)
-sanitize_quat = Quaternion(x=0.704910382145, y=0.00225726368985, z=-0.709292500216, w=0.000637998182669)
 
-initial_joint = ready_for_sanitize
-initial_joint = [j*math.pi/180.0 for j in initial_joint]
-
-# fixed motion for record
-# joint0 = [-2.65160733858, -0.787968460714, -1.77485400835, -1.28218108812, 1.23793566227, -4.4600678126]
-# joint1 = [-3.13806707064, -0.875796620046, -1.76907188097, -1.15789491335, 1.61859285831, -4.76847023169]
-# joint2 = [-3.51146394411, -0.984417740499, -1.73061067263, -1.13680297533, 1.90909790993, -5.00915128389]
-# joint3 = [-3.96667200724, -1.25426799456, -1.56269914309, -1.21947080294, 2.22984671593, -5.38175660769]
-# joint4 = [-4.133831803, -1.46375877062, -1.37870961825, -1.31245834032, 2.32692122459, -5.56171733538]
-# joint5 = [-4.28966409365, -1.84895164171, -0.921948734914, -1.52604610125, 2.39951276779, -5.75916833082]
-# record_motion = [joint0, joint1, joint2, joint3, joint4, joint5]
+# sanitize_quat = Quaternion(x=-0.705435194018, y=-0.708766915, z=0.0012030846429, w=0.00303312227606)
 
 def dxyz_wrt_eef_pose(cur_pose, dxyz):
     cur_pose_mat = pose_to_mat(cur_pose)
@@ -73,7 +66,7 @@ def pcl_fusion_reset():
         rospy.loginfo(e)
         return False
 
-def read_csv():
+def read_csv(quat):
     '''
     out : list of Pose
     '''
@@ -89,13 +82,40 @@ def read_csv():
                 ps.position.x = row_float[0]
                 ps.position.y = row_float[1]
                 ps.position.z = row_float[2]
-                ps.orientation = sanitize_quat
+                ps.orientation = quat
                 wpt_list.append(ps)
             return wpt_list
     except Exception as e:
         rospy.logerr(e)
         return []
 
+def convert_ref_frame(pose):
+    '''
+    in : [position, orien(euler)]
+    convert tf from /base_footprint -> /real_ee_link : p1
+                to /real_base_link -> /real_ee_link  : p0
+                p0 = T01*p1
+    '''
+    # start_pose = convert_ref_frame(cvrg_waypoints[0])
+    # trans, rot = pose_to_tr(start_pose)
+    # trans, rot = convert_ref_frame(cvrg_waypoints[0])
+    pose_wrt_base = pose_to_mat(pose)
+    t_ur5_base = tr_to_mat([-0.000, 0.175, -0.675], [0.000, 0.000, -0.707, 0.707])
+    pose_wrt_ur5 = mat_to_pose(tf.transformations.concatenate_matrices(t_ur5_base, pose_wrt_base))
+    return pose_wrt_ur5
+
+
+def test_convert_tf():
+    current.position.x = 0.347176858326
+    current.position.y = 0.468640011366
+    current.position.z = 1.14603542809
+    current.orientation.x = 0.765530197885
+    current.orientation.y = -0.643049350175
+    current.orientation.z = 0.0140599077307
+    current.orientation.w = 0.015917548841
+
+    converted_pose = convert_ref_frame([0.347176858326, 0.468640011366, 1.14603542809, 0.765530197885, -0.643049350175, 0.0140599077307, 0.015917548841])
+    print converted_pose
 
 class UR5MoveGroupGUI():
     def __init__(self, log_level):
@@ -124,17 +144,20 @@ class UR5MoveGroupGUI():
 
         rospy.Subscriber("compute_interpolation", Bool, self.compute_interpolation_cb)
         rospy.Subscriber("execute_interpolation", Bool, self.execute_interpolation_cb)
-        rospy.Subscriber("test", Bool, self.test_cb)
 
         rospy.Subscriber("waypoints/update", InteractiveMarkerUpdate, self.waypoints_update_cb)
         rospy.Subscriber("distance", Int32, self.distance_cb)
 
         rospy.Subscriber("solution_num", Int32, self.solution_cb)
 
-        rospy.Subscriber("gripper_close", Bool, self.gripper_close_cb)
+        # rospy.Subscriber("gripper_close", Bool, self.gripper_close_cb)
 
         rospy.Subscriber("pcl_record", Bool, self.record_move_cb)
         rospy.Subscriber("compute_interpolation", Bool, self.stitch_plan_cb)
+
+        rospy.Subscriber("/cb_gui_moveit/grasp_wand", Bool, self.grasp_wand_cb)
+        rospy.Subscriber("/cb_gui_moveit/scanning_plan", Bool, self.scanning_plan_req)
+        rospy.Subscriber("/cb_gui_moveit/scanning_execute", Bool, self.scanning_execute_req)
 
         # Publisher
         self.instruction_pub = rospy.Publisher('/instruction', String, queue_size=1)
@@ -143,6 +166,8 @@ class UR5MoveGroupGUI():
         self.captured_pcl = rospy.Publisher('/pcl_capture', Bool, queue_size=1)
 
         self.remove_imarker_pub = rospy.Publisher("/remove_imarker", Bool, queue_size=1)
+
+        self.gripper_close_pub = rospy.Publisher("/gripper_close", Bool, queue_size=1)
 
         # Service
         rospy.wait_for_service('/pcl_fusion_node/reset')
@@ -171,14 +196,14 @@ class UR5MoveGroupGUI():
         self.place_retreat_plan = None
 
         # for compute cartesian path
-        self.traj_for_wpts = None
+        self.scanning_plan1 = None
+        self.scanning_plan2 = None
         self.jump_threshold = 0.0
         self.eef_step = 0.01
 
         # set after execution
         self.pre_grasp_joint = None
         self.post_grasp_joint = None
-        self.initial_joint = initial_joint
 
         self.pick_retreat_step = 0
 
@@ -191,8 +216,10 @@ class UR5MoveGroupGUI():
 
         self.count = 0
 
-        self.move_to_target_joint(initial_joint)
-        rospy.loginfo("move to initial joint")
+        # initialize
+        self.initialize(initial_joint_for_capture)
+        self.scan_quat = None
+        self.grasp_wand = False
 
     ##################################################################################################
     ##################################################################################################
@@ -230,6 +257,14 @@ class UR5MoveGroupGUI():
         rospy.loginfo("plan to joint target| finished")
         return plan
 
+    def plan_for_pose_target(self, pose):
+        rospy.loginfo("plan to pose target| started")
+        self.group.set_pose_target(pose)
+        plan = self.group.plan()
+        self.group.clear_pose_targets()
+        rospy.loginfo("plan to pose target| finished")
+        return plan
+
     def execute_plan(self, plan):
         rospy.loginfo("execute plan| started")
         self.group.execute(plan, wait=True)
@@ -257,51 +292,164 @@ class UR5MoveGroupGUI():
 
     ##################################################################################################
     ##################################################################################################
-      
-    def move_to_grasp_wand(self):
+    def initialize(self, initial_joint):
+        self.group.set_end_effector_link("tcp_gripper_closed")
+        rospy.loginfo("*"*70)
+        rospy.loginfo("end effector: {}".format(self.group.get_end_effector_link()))
+        rospy.loginfo("*"*70)
+
+        print "move to initial joint: ", self.move_to_target_joint(initial_joint)
+
+    def grasp_wand_cb(self, msg):
         # all hard coded
-        # 1. home -> pre-grasp
+        # 0. current -> initial_joint
+        # 1. initial_joint_for_scan -> pre-grasp
         # 2. pre-grasp->grasp
         # 3. gripper close
         # 4. attach wand
         # 5. grasp->post-grasp
         # 6. post-grasp->ready_for_scan
-        pass
-
-    def move_along_cvrg_path(self, req):
-        # 1. read wpts from csv
-        # 2. ready_for_scan->start_of_path
-        # 3. move along cvrg_path
-        cvrg_waypoints = read_csv()
-        # print cvrg_waypoints
-        if len(cvrg_waypoints) != 0:
-            self.cvrg_waypoints = cvrg_waypoints
-            rospy.loginfo("cvrg_waypoints length is {}".format(len(self.cvrg_waypoints)))
-        self.group.set_pose_reference_frame("/base_footprint")
-        print "ref frame is ", self.group.get_pose_reference_frame()
-
+        initial_joint = initial_joint_for_scan
         
-        # move to the first pose
-        self.move_to_target_pose(self.cvrg_waypoints[0])
-        # 
-        self.compute_interpolation()
+        print "#"*80 
+        print initial_joint
+        raw_input()
+        print "0. move to initial joint: ", self.move_to_target_joint(initial_joint)
+
+        target_joint = self.group.get_current_joint_values()
+        target_joint[5] += math.pi 
+        print target_joint
+        raw_input()
+        print "1. move to target joint: ", self.move_to_target_joint(target_joint)
+
+        target_pose = self.group.get_current_pose()
+        target_pose.pose.position.x = wand_grasp_position[0] 
+        target_pose.pose.position.y = wand_grasp_position[1]
+        target_pose.pose.position.z = wand_grasp_position[2] + 0.08
+        print target_pose
+        raw_input()
+        print "2. move to target pose: ", self.move_to_target_pose(target_pose)
+
+        # move_dxyz(offset, eef_link, axis) move based on target frame -- need to change
+        target_pose = self.group.get_current_pose()
+        target_pose.pose.position.z -= 0.08
+        print target_pose
+        raw_input()
+        print "3. move to target pose: ", self.move_to_target_pose(target_pose)
+
+        raw_input()
+        print "4. grasp the wand:"
+        self.gripper_close_pub.publish(Bool(data=True))
+        self.attach_uv_wand()
+
+        target_pose = self.group.get_current_pose()
+        # target_pose.pose.position.y -= 0.08
+        target_pose.pose.position.z += 0.08
+        print target_pose
+        raw_input()
+        print "5. move to target pose: ", self.move_to_target_pose(target_pose)
+
+        target_joint = initial_joint
+        target_joint[5] += math.pi
+        print target_joint
+        raw_input()
+        print "6. move to target joint: ", self.move_to_target_joint(target_joint)
+
+        target_joint = self.group.get_current_joint_values()
+        target_joint[5] -= math.pi
+        print target_joint
+        raw_input()
+        
+
+        moveit_error = self.move_to_target_joint(target_joint)
+        print "7. move to target joint: ", moveit_error
+        if moveit_error is None:
+            print "Ready for Scanning"
+            self.grasp_wand = True
+
+
+    # def scanning_plan_req(self, req):
+    #     '''
+    #     1) read csv
+    #     2) IK for first pose -> first joint
+    #     3) plan for first joint
+    #     '''
+    #     cvrg_waypoints = read_csv()
+    #     # print cvrg_waypoints
+    #     if cvrg_waypoints:
+    #         self.cvrg_waypoints = cvrg_waypoints
+    #         rospy.loginfo("cvrg_waypoints length is {}".format(len(cvrg_waypoints)))
+    #         # plan for the first pose
+    #         current_joint = self.group.get_current_joint_values()
+    #         start_pose = convert_ref_frame(cvrg_waypoints[0])
+    #         print "-------start pose is {}".format(start_pose)
+    #         trans, rot = pose_to_tr(start_pose)
+    #         self.ur5_inv.solve_and_sort(trans, rot, current_joint)
+    #         valid, first_joint, first_rs = self.ur5_inv.publish_state(0)
+    #         if valid:
+    #             # plan for first pose
+    #             self.scanning_plan1 = self.plan_for_joint_target(first_joint)
+    #             # plan for cvrg_path
+    #             self.group.set_start_state(first_rs)
+    #             (plan2, fraction) = self.group.compute_cartesian_path(self.cvrg_waypoints, self.eef_step, self.jump_threshold)
+    #             rospy.loginfo("compute_interpolation_cb| Visualizing Cartesian path ({:.2f} per acheived)".format(fraction*100.0));
+    #             self.scanning_plan2 = plan2
+    #             return True
+    #         else:
+    #             rospy.logerror("first pose IK is not valid")
+    #             return False
+    #     else:
+    #         return False
+    def attach_uv_wand(self):
+        attach_link = "tcp_gripper_closed"
+        part_name = "uv_wand"
+        part_size = (0.27, 0.05, 0.05)    # box [26, 4, 4] + padding 1
+        part_pose = geometry_msgs.msg.PoseStamped()
+        part_pose.header.frame_id = "tcp_gripper_closed"
+        part_pose.header.stamp = rospy.Time.now()
+        part_pose.pose.position.x = -0.1
+        touch_links = self.robot.get_link_names(group='robotiq')
+        print "attach uv_wand|", self.scene.attach_box(link=attach_link, name=part_name, pose=part_pose, size=part_size, touch_links=touch_links)
+        self.group.set_end_effector_link("uv_light_center")
+        rospy.loginfo("*"*70)
+        rospy.loginfo("end effector: {}".format(self.group.get_end_effector_link()))
+        rospy.loginfo("*"*70)
+
 
     def scanning_plan_req(self, req):
-        cvrg_waypoints = read_csv()
-        # print cvrg_waypoints
-        if cvrg_waypoints:
-            self.cvrg_waypoints = cvrg_waypoints
-            rospy.loginfo("cvrg_waypoints length is {}".format(len(cvrg_waypoints)))
-            # move to the first pose
-            self.move_to_target_pose(self.cvrg_waypoints[0])
-            # move along the path
-            self.compute_interpolation()
-            return True
-        else:
-            return False
+        '''
+        1) read csv
+        2) IK for first pose -> first joint
+        3) plan for first joint
+        '''
+        if self.grasp_wand:
+            scan_pose = self.group.get_current_pose()
+            scan_quat = scan_pose.pose.orientation
+            print "quaternion for scan: ", scan_quat   
+
+            cvrg_waypoints = read_csv(scan_quat)
+            # print cvrg_waypoints
+            if cvrg_waypoints:
+                self.cvrg_waypoints = cvrg_waypoints
+                rospy.loginfo("cvrg_waypoints length is {}".format(len(cvrg_waypoints)))
+                # plan for first pose
+                self.scanning_plan1 = self.plan_for_pose_target(cvrg_waypoints[0])
+                rs = moveit_msgs.msg.RobotState()
+                rs.joint_state.header.frame_id = FRAME_ID
+                rs.joint_state.name = JOINTS
+                rs.joint_state.position = self.scanning_plan1.joint_trajectory.points[-1].positions
+                # plan for cvrg_path
+                self.group.set_start_state(rs)
+                (plan2, fraction) = self.group.compute_cartesian_path(self.cvrg_waypoints, self.eef_step, self.jump_threshold)
+                rospy.loginfo("compute_interpolation_cb| Visualizing Cartesian path ({:.2f} per acheived)".format(fraction*100.0));
+                self.scanning_plan2 = plan2
 
     def scanning_execute_req(self, req):
-        print "scanning execute", self.group.execute(self.traj_for_wpts)
+        print "scanning execute1|", self.group.execute(self.scanning_plan1)
+        print "current joint:\n{}".format(self.group.get_current_joint_values())
+        print "inital joint of execute2:\n{}".format(self.scanning_plan2.joint_trajectory.points[0].positions)
+        print "scanning execute|",self.move_to_target_joint(self.scanning_plan2.joint_trajectory.points[0].positions)
+        print "scanning execute2|", self.group.execute(self.scanning_plan2)
 
     def compute_interpolation(self):
         rospy.loginfo("compute_interpolation_cb|")
@@ -312,7 +460,6 @@ class UR5MoveGroupGUI():
             self.traj_for_wpts = path
         else:
             rospy.logerr("compute_interpolation_cb| No Waypoints")
-
 
     def compute_interpolation_cb(self, msg):
         rospy.loginfo("compute_interpolation_cb|")
@@ -338,8 +485,6 @@ class UR5MoveGroupGUI():
         else:
             rospy.logerr("execute_interpolation_cb| No Trajectory")
 
-    def test_cb(self, msg):
-        self.move_along_cvrg_path()
     ##################################################################################################
     ##################################################################################################
 
@@ -378,7 +523,7 @@ class UR5MoveGroupGUI():
         if self.pick_approach_plan is not None:
             self.remove_imarker_pub.publish(Bool(True))
             self.execute_plan(self.pick_approach_plan)
-            self.pre_grasp_joint = self.group.get_current_joint_values()
+            self.pre_grasp_joint = self.group.get_current_joint_values(self.scanning_plan2.joint_trajectory.points[0].positions)
             rospy.loginfo("pick_approach_execute done")
 
 
@@ -498,27 +643,27 @@ class UR5MoveGroupGUI():
 
         self.last_sol_num = sol_num
 
-    def gripper_close_cb(self, msg):
-        if msg.data:
-            rospy.sleep(2)  # wait for close gripper
-            attach_link = "left_inner_finger_pad"
-            part_name = "part"
-            part_size = 0.1 # sphere - radius
-            # part_size = (0.12, 0.02, 0.15)    # box
-            part_pose = geometry_msgs.msg.PoseStamped()
-            part_pose.header.frame_id = "left_inner_finger_pad"
-            part_pose.header.stamp = rospy.Time.now()
-            part_pose.pose.position.y = -0.01
-            part_pose.pose.position.z = 0.05
-            touch_links = self.robot.get_link_names(group='robotiq')
-            # self.scene.attach_box(link=attach_link, name=part_name, pose=part_pose, size=part_size, touch_links=touch_links)
-            self.attach_sphere(attach_link, part_name, part_pose, part_size, touch_links)
-            self.captured_pcl.publish(Bool(False))
-        else:
-            self.scene.remove_attached_object("left_inner_finger_pad", "part")
-            rospy.sleep(1)
-            self.scene.remove_world_object("part")
-            self.captured_pcl.publish(Bool(False))
+    # def gripper_close_cb(self, msg):
+    #     if msg.data:
+    #         rospy.sleep(2)  # wait for close gripper
+    #         attach_link = "left_inner_finger_pad"
+    #         part_name = "part"
+    #         part_size = 0.1 # sphere - radius
+    #         # part_size = (0.12, 0.02, 0.15)    # box
+    #         part_pose = geometry_msgs.msg.PoseStamped()
+    #         part_pose.header.frame_id = "left_inner_finger_pad"
+    #         part_pose.header.stamp = rospy.Time.now()
+    #         part_pose.pose.position.y = -0.01
+    #         part_pose.pose.position.z = 0.05
+    #         touch_links = self.robot.get_link_names(group='robotiq')
+    #         # self.scene.attach_box(link=attach_link, name=part_name, pose=part_pose, size=part_size, touch_links=touch_links)
+    #         self.attach_sphere(attach_link, part_name, part_pose, part_size, touch_links)
+    #         self.captured_pcl.publish(Bool(False))
+    #     else:
+    #         self.scene.remove_attached_object("left_inner_finger_pad", "part")
+    #         rospy.sleep(1)
+    #         self.scene.remove_world_object("part")
+    #         self.captured_pcl.publish(Bool(False))
 
 def main(arg):
     if len(arg) > 1:

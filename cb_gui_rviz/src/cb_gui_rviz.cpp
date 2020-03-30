@@ -101,14 +101,19 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
   btn_abb_reset_->setText("Reset");
   connect(btn_abb_reset_, SIGNAL(clicked()), this, SLOT(abbReset()));
 
-  btn_abb_save_ = new QPushButton(this);
-  btn_abb_save_->setText("Save");
-  connect(btn_abb_save_, SIGNAL(clicked()), this, SLOT(abbSave()));
+  // btn_abb_save_ = new QPushButton(this);
+  // btn_abb_save_->setText("Save");
+  // connect(btn_abb_save_, SIGNAL(clicked()), this, SLOT(abbSave()));
 
   // Create a push button
   btn_cvrg_plan_ = new QPushButton(this);
   btn_cvrg_plan_->setText("Plan");
   connect(btn_cvrg_plan_, SIGNAL(clicked()), this, SLOT(cvrgPlan()));
+
+  // Create a push button
+  btn_grasp_wand_ = new QPushButton(this);
+  btn_grasp_wand_->setText("Grasp Wand");
+  connect(btn_grasp_wand_, SIGNAL(clicked()), this, SLOT(graspWand()));
 
   // Create a push button
   btn_scanning_plan_ = new QPushButton(this);
@@ -265,6 +270,7 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
   layout->addLayout(l_pcl);
   layout->addLayout(l_abb);
   layout->addWidget(btn_cvrg_plan_);
+  layout->addWidget(btn_grasp_wand_);
   layout->addWidget(btn_scanning_plan_);
   layout->addWidget(btn_scanning_execute_);
 
@@ -373,7 +379,7 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
   m_motion = 0; // 0-pick up, 1-place
 
   mb_status_subscriber_ = nh_.subscribe<std_msgs::Int32>("/cb_gui_mb_status", 1, &CBGuiRviz::mb_status_cb, this);
-  cvrg_pcl_subscriber_ = nh_.subscribe<sensor_msgs::PointCloud2>("/approximate_bb/cloud_trimmed", 100, &CBGuiRviz::cvrg_pcl_cb, this);
+  cvrg_pcl_subscriber_ = nh_.subscribe<sensor_msgs::PointCloud2>("/captured_pcl", 100, &CBGuiRviz::cvrg_pcl_cb, this);
 
 }
 
@@ -542,33 +548,48 @@ int CBGuiRviz::cvrgPlan()
   }
 }
 
+void CBGuiRviz::graspWand()
+{
+  std_msgs::Bool msg;
+  msg.data = true;
+  grasp_wand_publisher_.publish(msg);
+}
+
 void CBGuiRviz::scanPlan()
 {
-  std_srvs::Trigger srv;
+  // std_srvs::Trigger srv;
 
   // btn_scanning_plan_->setEnabled(false);
 
-  if(scan_plan_client_.call(srv))
-    ROS_INFO_STREAM_NAMED("gui", "scan plan success");
-  else
-    ROS_ERROR_STREAM_NAMED("gui", "scan plan failed");
+  // if(scan_plan_client_.call(srv))
+  //   ROS_INFO_STREAM_NAMED("gui", "scan plan success");
+  // else
+  //   ROS_ERROR_STREAM_NAMED("gui", "scan plan failed");
 
   // btn_scanning_plan_->setEnabled(true);
+
+  std_msgs::Bool msg;
+  msg.data = true;
+  scan_plan_publisher_.publish(msg);
 
 }
 
 void CBGuiRviz::scanExecute()
 {
-  std_srvs::Trigger srv;
+  // std_srvs::Trigger srv;
 
-  btn_scanning_execute_->setEnabled(false);
+  // btn_scanning_execute_->setEnabled(false);
 
-  if(scan_execute_client_.call(srv))
-    ROS_INFO_STREAM_NAMED("gui", "scanning execute success");
-  else
-    ROS_ERROR_STREAM_NAMED("gui", "scanning execute failed");
+  // if(scan_execute_client_.call(srv))
+  //   ROS_INFO_STREAM_NAMED("gui", "scanning execute success");
+  // else
+  //   ROS_ERROR_STREAM_NAMED("gui", "scanning execute failed");
 
-  btn_scanning_execute_->setEnabled(true);
+  // btn_scanning_execute_->setEnabled(true);
+
+  std_msgs::Bool msg;
+  msg.data = true;
+  scan_execute_publisher_.publish(msg);
 }
 
 void CBGuiRviz::apprPlan()

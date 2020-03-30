@@ -62,7 +62,7 @@ class ur5_inv_kin_wrapper(ur5):
 		rot_mat = tf.transformations.quaternion_matrix(rot)
 		pose_mat = tf.transformations.concatenate_matrices(trans_mat, rot_mat)
 
-		pose_mat = self._convert_base_axis(pose_mat)
+		# pose_mat = self._convert_base_axis(pose_mat)
 		return pose_mat
 
 	def _print_sol(self, sol_rad):
@@ -220,19 +220,22 @@ class ur5_inv_kin_wrapper(ur5):
 
 		print(selected_inv_sol)
 
-		robot_state = moveit_msgs.msg.DisplayRobotState()
-		robot_state.state.joint_state.header.frame_id = FRAME_ID
-		robot_state.state.joint_state.name = JOINTS
-		robot_state.state.joint_state.position = selected_inv_sol
-		robot_state.state.multi_dof_joint_state.header.frame_id = FRAME_ID
+		drs = moveit_msgs.msg.DisplayRobotState()
+		rs = moveit_msgs.msg.RobotState()
+
+		rs.joint_state.header.frame_id = FRAME_ID
+		rs.joint_state.name = JOINTS
+		rs.joint_state.position = selected_inv_sol
+		rs.multi_dof_joint_state.header.frame_id = FRAME_ID
+		rs.is_diff = True
 		if self.aco is not None:
-			robot_state.state.attached_collision_objects = [self.aco]
-		robot_state.highlight_links = link_colors
-		robot_state.state.is_diff = True
+			rs.attached_collision_objects = [self.aco]
 
-		self.robot_state_pub.publish(robot_state)
+		drs.state = rs
+		drs.highlight_links = link_colors
+		self.robot_state_pub.publish(drs)
 
-		return valid, selected_inv_sol
+		return valid, selected_inv_sol, rs
 
 def main():
 	rospy.init_node('ur5_inv_kin_wrapper')

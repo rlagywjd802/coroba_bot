@@ -1,4 +1,5 @@
 import tf
+import math
 import numpy as np
 
 from const import *
@@ -41,6 +42,14 @@ def mat_to_pose(pose_mat):
 	pose.orientation.w = rot[3]
 
 	return pose
+
+def pose_to_tr(pose):
+	pp = pose.position
+	po = pose.orientation
+	trans = [pp.x, pp.y, pp.z]
+	rot = [po.x, po.y, po.z, po.w]
+
+	return trans, rot
 
 def euler_to_quat(r, p, y):
 	quat_array = tf.transformations.quaternion_from_euler(r, p, y)
@@ -121,3 +130,8 @@ if __name__== "__main__":
 
 	b_pose = transform_pose_to_pose(a_pose, T_trans)
 	print(b_pose)
+
+## 
+def d2r(joints_d):
+    joints_r = [j*math.pi/180.0 for j in joints_d]
+    return joints_r

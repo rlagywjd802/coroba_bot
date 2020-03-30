@@ -32,7 +32,8 @@
   <!-- Battery Size -->
   <xacro:property name="battery_x_size" value="${0.18+0.02}"/>
   <xacro:property name="battery_y_size" value="${0.36+0.02}"/>
-  <xacro:property name="battery_z_size" value="${0.28+0.02}"/>
+  <!-- <xacro:property name="battery_z_size" value="${0.28+0.02}"/> -->
+  <xacro:property name="battery_z_size" value="${0.28-0.02}"/>
   
   <xacro:property name="M_PI" value="3.14159"/>
 
@@ -166,13 +167,13 @@
     </collision>
   </link>
 
-  <joint name="camera_profile_right_fixed_joint" type="fixed">
+  <!-- <joint name="camera_profile_right_fixed_joint" type="fixed">
     <parent link="bare_base_link"/>
     <child link="camera_profile_right"/>
     <origin xyz="${-base_x_size/2 + profile_size/2} ${-base_y_size/2 + profile_size/2} ${base_center_height + base_z_size/2 + profile_right_height/2}" rpy="0 0 0"/>
-  </joint>
+  </joint> -->
 
-  <link name="camera_profile_right">
+  <!-- <link name="camera_profile_right">
     <visual>
       <geometry>
         <box size="${profile_size} ${profile_size} ${profile_right_height}"/>
@@ -186,7 +187,7 @@
       </geometry>
       <material name="black"/>
     </collision>
-  </link>
+  </link> -->
 
   <!-- battery -->
   <joint name="battery_fixed_joint" type="fixed">

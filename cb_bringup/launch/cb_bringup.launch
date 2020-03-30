@@ -20,9 +20,9 @@
 	</include>
 
 	<!-- gripper -->
-	<include file="$(find cb_bringup)/launch/cb_gripper_bringup.launch">
+	<!-- <include file="$(find cb_bringup)/launch/cb_gripper_bringup.launch">
 		<arg name="device"		value="$(arg gripper_device)"/>
-	</include>
+	</include> -->
 
 	<!-- urdf -->
 	<include file="$(find cb_description)/launch/description.launch" />
@@ -64,7 +64,7 @@
   	</node>
 
   	<!-- plan -->
-  	<rosparam command="load" file="$(find cvrg_path)/config/scan_prop_1.yaml"/>
+  	<!-- <rosparam command="load" file="$(find cvrg_path)/config/scan_prop_1.yaml"/> -->
 
 	<node if="$(arg rviz)" name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find cb_bringup)/rviz/bringup.rviz"/>
 

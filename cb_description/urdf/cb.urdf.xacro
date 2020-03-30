@@ -6,7 +6,7 @@
   <xacro:arg name="robot_namespace" default="/"/>
   <xacro:arg name="realsense1_enabled" default="true"/>
   <xacro:arg name="realsense2_enabled" default="true"/>
-  <xacro:arg name="realsense3_enabled" default="true"/>
+  <xacro:arg name="realsense3_enabled" default="false"/>
   <xacro:arg name="ur_enabled" default="true"/>
   <xacro:arg name="gripper_enabled" default="true"/>
 
@@ -24,10 +24,22 @@
     <xacro:property name="ur5_z_location" value="${base_center_height + base_z_size/2}" />
     <xacro:property name="ur5_x_location" value="0.175" />
     
-    <joint name="ur_fixed_joint" type="fixed">
+    <link name="real_base_link"/>
+    <link name="real_ee_link"/>
+    <link name="tcp_gripper_open"/>
+    <link name="tcp_gripper_closed"/>
+    <link name="uv_light_center"/>
+
+    <joint name="ur_real_base_fixed_joint" type="fixed">
       <parent link="bare_base_link" />
+      <child link="real_base_link" />
+      <origin xyz="${ur5_x_location} 0.0 ${ur5_z_location}" rpy="0.0 0.0 ${M_PI/2}" />
+    </joint>
+
+    <joint name="ur_base_fixed_joint" type="fixed">
+      <parent link="real_base_link" />
       <child link="base_link" />
-      <origin xyz="${ur5_x_location} 0.0 ${ur5_z_location}" rpy="0.0 0.0 -${M_PI/2}" />
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 -${M_PI}" />
     </joint>
 
     <joint name="ur_real_ee_fixed_joint" type="fixed">
@@ -36,7 +48,23 @@
       <origin xyz="0.0 0.0 0.0" rpy="-${M_PI/2} 0.0 -${M_PI/2}" />
     </joint>
 
-    <link name="real_ee_link"/>
+    <joint name="ur_tcp_fixed_joint" type="fixed">
+      <parent link="real_ee_link"/>
+      <child link="tcp_gripper_open"/>
+      <origin xyz="0 0 0.13" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="ur_gripper_closed_fixed_joint" type="fixed">
+      <parent link="tcp_gripper_open"/>
+      <child link="tcp_gripper_closed"/>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="ur_light_center_fixed_joint" type="fixed">
+      <parent link="tcp_gripper_closed"/>
+      <child link="uv_light_center"/>
+      <origin xyz="-0.155 0 0" rpy="0 0 0"/>
+    </joint>
 
     <xacro:ur5_robot prefix="" joint_limited="false"/>
 
@@ -49,7 +77,6 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
       </joint>
 
-      <!-- actual end-effector -->
       <joint name="ur_ee_fixed_joint" type="fixed">
         <parent link="tool0"/>
         <child link="robotiq_ee"/>
@@ -57,6 +84,7 @@
       </joint>
 
       <link name="robotiq_ee"/>
+
 
       <xacro:robotiq_arg2f_85 prefix=""/>
     </xacro:if>

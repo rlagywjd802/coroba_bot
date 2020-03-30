@@ -10,14 +10,14 @@
     <!-- <node pkg="pc_to_mesh" type="pub_ptCloud" name="ptCl_pub" output="screen"/> -->
 
     <!-- Launch the service to convert pc to mesh -->
-    <!-- <node pkg="pc_to_mesh" type="greedy_projection" name="greedy_projection" output="screen"/> -->
+    <node pkg="pc_to_mesh" type="greedy_projection" name="greedy_projection" output="screen"/>
 
     <!-- ////////////////////////////////////////////////////////////// -->
     <!-- <include file="$(find pc_to_mesh)/launch/viz_PC.launch" /> -->
 	<!-- ////////////////////////////////////////////////////////////// -->
     <!-- <node pkg="rviz" name="pc_viz_rviz" type="rviz" args="$(find pc_to_mesh)/config/rviz_config.rviz" required="true"/> -->
 
-    <!-- <node pkg="tf" type="static_transform_publisher" name="map_T_world" args="0 0 0 0 0 0 /map /world 10" /> -->
+    <node pkg="tf" type="static_transform_publisher" name="map_T_world" args="0 0 0 0 0 0 /map /world 10" />
 
     <node pkg="pc_to_mesh" type="viz_node" name="viz_node" output="screen"/>
 
@@ -27,6 +27,6 @@
     <!-- <include file="$(find cvrg_path)/launch/cvrg_planner.launch"/> -->
     <!-- ////////////////////////////////////////////////////////////// -->
     <rosparam command="load" file="$(find cvrg_path)/config/scan_prop_1.yaml"/>
-    <!-- <node pkg="cvrg_path" name="cvrg_planner" type="gen_cvrg_plan" output="screen"/> -->
+    <node pkg="cvrg_path" name="cvrg_planner" type="gen_cvrg_plan" output="screen"/>
 
 </launch>

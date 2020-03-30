@@ -8,8 +8,9 @@ from geometry_msgs.msg import Quaternion
 # cb
 MOVE_GROUP = "ur5"
 FRAME_ID = "/base_footprint"
-# FRAME_ID = "map"
-EEF_LINK = "eef_pose"
+REF_LINK = "/real_base_link"
+EEF_LINK = "/real_ee_link"
+# EEF_LINK = "eef_pose"
 REAL_EEF_LINK = "real_eef_pose"
 
 GRIPPER_MESH = "package://cb_description/meshes/gripper/robotiq_2f85_opened_combined_axis_mated.STL"
