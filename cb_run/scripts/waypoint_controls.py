@@ -26,7 +26,7 @@ class WaypointsGUIControl():
         rospy.init_node("waypoints_gui_control", log_level=log_level)
 
         # Subscriber
-        rospy.Subscriber("clicked_point", PointStamped, self.clicked_cb)
+        rospy.Subscriber("approach_point", PointStamped, self.clicked_cb)
 
         rospy.Subscriber("rotate_axis", String, self.rotate_axis_cb)
         rospy.Subscriber("distance", Int32, self.distance_cb)
@@ -290,12 +290,9 @@ class WaypointsGUIControl():
                 rospy.loginfo("remove_imarker_cb| no imarker")
 
 def main(arg):
-    if len(arg) > 1:
-        if arg[1] == "debug":
-            log_level = rospy.DEBUG
-    else:
-        log_level = rospy.INFO
-
+    log_level = rospy.INFO
+    if len(arg) > 1 and arg[1] == "debug":
+            log_level = rospy.DEBUG        
     try:
         wgc = WaypointsGUIControl(log_level)
         rospy.spin()

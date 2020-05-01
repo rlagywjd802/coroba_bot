@@ -7,6 +7,7 @@
   <xacro:arg name="realsense1_enabled" default="true"/>
   <xacro:arg name="realsense2_enabled" default="true"/>
   <xacro:arg name="realsense3_enabled" default="false"/>
+  <xacro:arg name="kinect1_enabled" default="true"/>
   <xacro:arg name="ur_enabled" default="true"/>
   <xacro:arg name="gripper_enabled" default="true"/>
 
@@ -16,6 +17,7 @@
   <xacro:include filename="$(find robotiq_2f_85_gripper_visualization)/urdf/robotiq_arg2f_85_model_macro.xacro" />
   <xacro:include filename="$(find realsense2_description)/urdf/_d415.urdf.xacro" />
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />  
+  <xacro:include filename="$(find cb_description)/urdf/accessories/kinect_tilted_camera.urdf.xacro"/>
 
   <!-- ********************* -->
   <!--          ur5          -->
@@ -147,6 +149,18 @@
     <xacro:sensor_d435 parent="realsense3_base_link" name="realsense3">
       <origin xyz="0.010 0 -0.0125" rpy="0 0 0"/>
     </xacro:sensor_d435>
+  </xacro:if>
+
+  <!-- ********************* -->
+  <!--         kinect        -->  
+  <!-- ********************* -->
+  <xacro:if value="$(arg kinect1_enabled)">
+    <xacro:arg name="kinect1_base_xyz" default="${base_x_size/2 + 0.041} 0 ${base_center_height + base_z_size/2 - 0.071}"/>
+    <xacro:arg name="kinect1_base_rpy" default="0 0 0"/>
+    <xacro:arg name="kinect1_tilt_angle" default="0"/>
+  
+    <xacro:kinect_tilted_camera prefix="kinect1" robot_namespace="$(arg robot_namespace)" 
+      base_xyz="$(arg kinect1_base_xyz)" base_rpy="$(arg kinect1_base_rpy)" tilt_angle="$(arg kinect1_tilt_angle)"/>
   </xacro:if>
 
 </robot>

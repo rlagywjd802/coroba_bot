@@ -84,6 +84,7 @@ include_directories(SYSTEM include ${catkin_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIRS}
 set(SOURCE_FILES
   src/${PROJECT_NAME}.cpp
   src/key_tool.cpp
+  src/point_tool.cpp
   src/e_stop.cpp
 )
 

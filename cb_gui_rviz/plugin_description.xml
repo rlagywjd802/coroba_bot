@@ -7,6 +7,14 @@
 		</description>
 	</class>
 
+	<class name="cb_gui_rviz/ApproachPoint" 
+				type="cb_gui_rviz::PointTool" 
+				base_class_type="rviz::Tool">
+		<description>
+			Tool to capture clicked input
+		</description>
+	</class>
+
 	<class name="cb_gui_rviz/KeyTool" 
 				type="cb_gui_rviz::KeyTool" 
 				base_class_type="rviz::Tool">

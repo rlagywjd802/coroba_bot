@@ -1,0 +1,30 @@
+<launch>
+	<arg name="rviz"			default="true"/>
+	<arg name="map_name"		default="rtabmap.db"/>
+
+	<include file="$(find openni_launch)/launch/openni.launch">
+		<arg name="camera" 				value="kinect1"/>
+		<arg name="depth_registration" 	value="true"/>
+	</include>
+
+	<include file="$(find cb_slam)/launch/cb_rtabmap.launch">
+		<arg name="camera" 				value="kinect1"/>
+		<arg name="localization"		value="true"/>
+		<arg name="dwa"					value="false"/>
+		<arg name="database_path" 		value="$(arg map_name)"/>
+		<arg name="odom_topic"			value="/odom"/>
+	</include>
+
+	<!-- urdf -->
+	<include file="$(find cb_description)/launch/description.launch" />
+
+	<!-- joint state publisher -->
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+	</node>
+
+	<!-- robot state publisher -->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+	<node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find cb_slam)/rviz/base_rtabmap_teb.rviz"/>
+  	
+</launch>

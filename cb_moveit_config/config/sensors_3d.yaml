@@ -5,6 +5,6 @@ sensors:
     max_update_rate: 1.0
     padding_offset: 0.03 # 0.05
     padding_scale: 1.0
-    point_cloud_topic: /pcl_fusion_node_color/pcl_fusion_node/fused_points
+    point_cloud_topic: /captured_pcl #/pcl_fusion_node_color/pcl_fusion_node/fused_points
     point_subsample: 1
     sensor_plugin: occupancy_map_monitor/PointCloudOctomapUpdater

@@ -1,14 +1,35 @@
 <launch>
 	<arg name="rviz"			default="false"/>
+	<arg name="rtabmap"			default="false"/>
+	<arg name="map_name"		default="rtabmap.db"/>
 
-	<arg name="base_device"		default="/dev/ttyACM1"/>
+	<arg name="base_device"		default="/dev/ttyACM0"/>
 	<arg name="gripper_device"	default="/dev/ttyUSBgripper"/>
+	<arg name="cam1_device" 	default="/dev/video0"/>
+	<arg name="cam2_device" 	default="/dev/video1"/>
+	<arg name="cam3_device" 	default="/dev/video2"/>
 
 	<!-- cameras -->
 	<include file="$(find cb_bringup)/launch/cb_realsense_bringup.launch">
 		<arg name="camera1" value="true"/>
 		<!-- <arg name="camera2" value="true"/> -->
 		<!-- <arg name="camera3" value="true"/> -->
+	</include>
+	<include file="$(find usb_cam)/launch/usb_cam.launch">
+		<arg name="camera"	value="cam1"/>
+		<arg name="device"	value="$(arg cam1_device)"/>
+	</include>
+	<include file="$(find usb_cam)/launch/usb_cam.launch">
+		<arg name="camera"	value="cam2"/>
+		<arg name="device"	value="$(arg cam2_device)"/>
+	</include>
+	<include file="$(find usb_cam)/launch/usb_cam.launch">
+		<arg name="camera"	value="cam3"/>
+		<arg name="device"	value="$(arg cam3_device)"/>
+	</include>
+	<include file="$(find openni_launch)/launch/openni.launch">
+		<arg name="camera" 				value="kinect1"/>
+		<arg name="depth_registration" 	value="true"/>
 	</include>
 
 	<!-- base -->
@@ -20,9 +41,9 @@
 	</include>
 
 	<!-- gripper -->
-	<!-- <include file="$(find cb_bringup)/launch/cb_gripper_bringup.launch">
+	<include file="$(find cb_bringup)/launch/cb_gripper_bringup.launch">
 		<arg name="device"		value="$(arg gripper_device)"/>
-	</include> -->
+	</include>
 
 	<!-- urdf -->
 	<include file="$(find cb_description)/launch/description.launch" />
@@ -33,8 +54,17 @@
 	</node>
 
 	<!-- robot state publisher -->
-	<node pkg="tf" type="static_transform_publisher" name="map_to_cb" args="0 0 0 0 0 0 /map /base_footprint 50" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+	<!-- slam & navigation -->
+	<node unless="$(arg rtabmap)" pkg="tf" type="static_transform_publisher" name="map_to_cb" args="0 0 0 0 0 0 /map /base_footprint 50" />
+	<include if="$(arg rtabmap)" file="$(find cb_slam)/launch/cb_rtabmap.launch">
+		<arg name="camera" 				value="kinect1"/>
+		<arg name="localization"		value="true"/>
+		<arg name="dwa"					value="false"/>
+		<arg name="database_path" 		value="$(arg map_name)"/>
+		<arg name="odom_topic"			value="/odom"/>
+	</include>
 
 	<!-- move group -->
 	<include file="$(find cb_moveit_config)/launch/cb_moveit_planning_execution.launch"/>
@@ -55,17 +85,21 @@
 
 	<!-- trimming -->
 	<!-- /captured_pcl -> /approximate_bb/cloud_trimmed -->
-  	<node pkg="tf" type="static_transform_publisher" name="map_to_pcl" args="0 0 0 0 0 0 1 map pcl 100" />
+  	<node pkg="tf" type="static_transform_publisher" name="map_to_pcl" args="0 0 0 0 0 0 1 /base_footprint pcl 100" />
   	<node name="approximate_bounding_box" pkg="approximate_bb" type="approximate_bounding_box" output="screen">
 		<remap from="~input_point_cloud" to="/captured_pcl" />
 		<param name="output_frame" value="pcl"/>
 		<param name="output_point_cloud" value="/captured_pcl" />
-		<param name="filename_global" value="/home/mm/cb_ws/src/mobile_disinfectant_rob/pc_to_mesh/data/test/test.pcd"/>
+		<param name="filename_global" value="/home/mm/cb_ws/src/mobile_disinfectant_rob/pc_to_mesh/data/test/test4.pcd"/>
   	</node>
 
-  	<!-- plan -->
+  	<!-- plan for scan -->
   	<!-- <rosparam command="load" file="$(find cvrg_path)/config/scan_prop_1.yaml"/> -->
+  	<include file="$(find cb_bringup)/launch/cb_plan_for_scan.launch"/>
 
-	<node if="$(arg rviz)" name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find cb_bringup)/rviz/bringup.rviz"/>
+	<!-- plan for clicked_point -->
+	<!-- <include file="$(find cb_bringup)/launch/cb_plan_for_clicked_point.launch"/> -->
+
+	<node if="$(arg rviz)" name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find cb_bringup)/rviz/bringup_reduced.rviz"/>
 
 </launch>

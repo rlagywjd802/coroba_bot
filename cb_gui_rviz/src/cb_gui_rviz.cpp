@@ -106,14 +106,18 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
   // connect(btn_abb_save_, SIGNAL(clicked()), this, SLOT(abbSave()));
 
   // Create a push button
-  btn_cvrg_plan_ = new QPushButton(this);
-  btn_cvrg_plan_->setText("Plan");
-  connect(btn_cvrg_plan_, SIGNAL(clicked()), this, SLOT(cvrgPlan()));
-
-  // Create a push button
   btn_grasp_wand_ = new QPushButton(this);
   btn_grasp_wand_->setText("Grasp Wand");
   connect(btn_grasp_wand_, SIGNAL(clicked()), this, SLOT(graspWand()));
+
+  btn_put_wand_ = new QPushButton(this);
+  btn_put_wand_->setText("Put Wand Back");
+  connect(btn_put_wand_, SIGNAL(clicked()), this, SLOT(putWand()));
+
+  // Create a push button
+  btn_cvrg_plan_ = new QPushButton(this);
+  btn_cvrg_plan_->setText("Generate Constrained Path");
+  connect(btn_cvrg_plan_, SIGNAL(clicked()), this, SLOT(cvrgPlan()));
 
   // Create a push button
   btn_scanning_plan_ = new QPushButton(this);
@@ -184,6 +188,37 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
   btn_move_zm_->setText("Down");
   connect(btn_move_zm_, SIGNAL(clicked()), this, SLOT(moveZM()));
 
+  // Create a push button
+  btn_move_j1m_ = new QPushButton(this);
+  btn_move_j1m_->setText("-");
+  connect(btn_move_j1m_, SIGNAL(clicked()), this, SLOT(moveJ1M()));
+
+  // Create a push button
+  btn_move_j1p_ = new QPushButton(this);
+  btn_move_j1p_->setText("+");
+  connect(btn_move_j1p_, SIGNAL(clicked()), this, SLOT(moveJ1P()));
+
+  // Create a push button
+  btn_move_j4m_ = new QPushButton(this);
+  btn_move_j4m_->setText("-");
+  connect(btn_move_j4m_, SIGNAL(clicked()), this, SLOT(moveJ4M()));
+
+  // Create a push button
+  btn_move_j4p_ = new QPushButton(this);
+  btn_move_j4p_->setText("+");
+  connect(btn_move_j4p_, SIGNAL(clicked()), this, SLOT(moveJ4P()));
+
+  // Create a push button
+  btn_move_j6m_ = new QPushButton(this);
+  btn_move_j6m_->setText("-");
+  connect(btn_move_j6m_, SIGNAL(clicked()), this, SLOT(moveJ6M()));
+
+  // Create a push button
+  btn_move_j6p_ = new QPushButton(this);
+  btn_move_j6p_->setText("+");
+  connect(btn_move_j6p_, SIGNAL(clicked()), this, SLOT(moveJ6P()));
+
+
   // Create a radio button
   rbtn_appr_1_ = new QRadioButton("roll(red)", this);
   rbtn_appr_2_ = new QRadioButton("pitch(green)", this);
@@ -212,12 +247,12 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
 
   // Create a text browser
   timer_ = new QTimer(this);
-  connect(timer_, SIGNAL(timeout()), this, SLOT(updateText()));
+  // connect(timer_, SIGNAL(timeout()), this, SLOT(updateText()));
   connect(timer_, SIGNAL(timeout()), this, SLOT(updateMBResult()));
   timer_->start(100);
 
-  text_browser_ = new QTextBrowser(this);
-  text_browser_->setStyleSheet("font: 15pt");
+  // text_browser_ = new QTextBrowser(this);
+  // text_browser_->setStyleSheet("font: 15pt");
 
   // Create a combo box
   combo_box_ = new QComboBox(this);
@@ -241,7 +276,7 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
   layout = new QVBoxLayout;
 
   // text browser
-  layout->addWidget(text_browser_);
+  // layout->addWidget(text_browser_);
 
   // Mobile Base
   lb_mb_ = new QLabel(QString::fromStdString("Mobile Base"));
@@ -269,10 +304,21 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
   layout->addWidget(lb_pcl_);
   layout->addLayout(l_pcl);
   layout->addLayout(l_abb);
+
+  lb_san_ = new QLabel(QString::fromStdString("Sanitize Area"));
+  lb_san_->setAlignment(Qt::AlignCenter);
+  QHBoxLayout* l_wand = new QHBoxLayout;
+  l_wand->addWidget(btn_grasp_wand_);
+  l_wand->addWidget(btn_put_wand_);
+  layout->addWidget(lb_san_);
+  layout->addLayout(l_wand);
+
   layout->addWidget(btn_cvrg_plan_);
-  layout->addWidget(btn_grasp_wand_);
-  layout->addWidget(btn_scanning_plan_);
-  layout->addWidget(btn_scanning_execute_);
+
+  QHBoxLayout* l_scan = new QHBoxLayout;
+  l_scan->addWidget(btn_scanning_plan_);
+  l_scan->addWidget(btn_scanning_execute_);
+  layout->addLayout(l_scan);
 
   // Settings for Approaching Pickup
   lb_appr_ = new QLabel(QString::fromStdString("Settings for Approaching Pickup"));
@@ -330,19 +376,7 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
   // Move End-Effector
   lb_ee_ = new QLabel(QString::fromStdString("Move End-Effector"));
   lb_ee_->setAlignment(Qt::AlignCenter);
-  // QHBoxLayout* l_ee = new QHBoxLayout;
-  // QVBoxLayout* l_ee_x = new QVBoxLayout;
-  // QVBoxLayout* l_ee_y = new QVBoxLayout;
-  // QVBoxLayout* l_ee_z = new QVBoxLayout;
-  // l_ee_x->addWidget(btn_move_xp_);
-  // l_ee_x->addWidget(btn_move_xm_);
-  // l_ee_y->addWidget(btn_move_yp_);
-  // l_ee_y->addWidget(btn_move_ym_);
-  // l_ee_z->addWidget(btn_move_zp_);
-  // l_ee_z->addWidget(btn_move_zm_);
-  // l_ee->addLayout(l_ee_x);
-  // l_ee->addLayout(l_ee_y);
-  // l_ee->addLayout(l_ee_z);
+
   QHBoxLayout* l_ee_z = new QHBoxLayout;
   l_ee_z->addWidget(btn_move_zp_);
   l_ee_z->addWidget(btn_move_zm_);
@@ -353,7 +387,36 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
   l_ee->addWidget(btn_move_ym_, 2, 3);
   l_ee->addLayout(l_ee_z, 2, 2);
   layout->addWidget(lb_ee_);
-  layout->addLayout(l_ee);
+  // layout->addLayout(l_ee);
+
+  QHBoxLayout* l_j = new QHBoxLayout;
+  QVBoxLayout* l_j1 = new QVBoxLayout;
+  QLabel* lb_j1_ = new QLabel(QString::fromStdString("J1"));
+  lb_j1_->setAlignment(Qt::AlignCenter);
+  l_j1->addWidget(btn_move_j1m_);
+  l_j1->addWidget(lb_j1_);
+  l_j1->addWidget(btn_move_j1p_);
+  QVBoxLayout* l_j4 = new QVBoxLayout;
+  QLabel* lb_j4_ = new QLabel(QString::fromStdString("J4"));
+  lb_j4_->setAlignment(Qt::AlignCenter);
+  l_j4->addWidget(btn_move_j4m_);
+  l_j4->addWidget(lb_j4_);
+  l_j4->addWidget(btn_move_j4p_);
+  QVBoxLayout* l_j6 = new QVBoxLayout;
+  QLabel* lb_j6_ = new QLabel(QString::fromStdString("J6"));
+  lb_j6_->setAlignment(Qt::AlignCenter);
+  l_j6->addWidget(btn_move_j6m_);
+  l_j6->addWidget(lb_j6_);
+  l_j6->addWidget(btn_move_j6p_);
+
+  l_j->addLayout(l_j1);
+  l_j->addLayout(l_j4);
+  l_j->addLayout(l_j6);
+
+  QVBoxLayout* l_manual = new QVBoxLayout;
+  l_manual->addLayout(l_ee);
+  l_manual->addLayout(l_j);
+  layout->addLayout(l_manual);
   
   lb_gripper_ = new QLabel(QString::fromStdString("Gripper Action"));
   lb_gripper_->setAlignment(Qt::AlignCenter);
@@ -380,6 +443,7 @@ CBGuiRviz::CBGuiRviz(QWidget* parent) : rviz::Panel(parent)
 
   mb_status_subscriber_ = nh_.subscribe<std_msgs::Int32>("/cb_gui_mb_status", 1, &CBGuiRviz::mb_status_cb, this);
   cvrg_pcl_subscriber_ = nh_.subscribe<sensor_msgs::PointCloud2>("/captured_pcl", 100, &CBGuiRviz::cvrg_pcl_cb, this);
+  // cvrg_pcl_subscriber_ = nh_.subscribe<sensor_msgs::PointCloud2>("/ptcloud1", 100, &CBGuiRviz::cvrg_pcl_cb, this);
 
 }
 
@@ -428,12 +492,18 @@ void CBGuiRviz::resumeRtabmap()
 
 void CBGuiRviz::moveGripperOpen()
 {
-  remote_reciever_.publishGripperOpen();
+  std_msgs::Bool msg;
+  msg.data = false;
+  grasp_object_publisher_.publish(msg);
+  // remote_reciever_.publishGripperOpen();
 }
 
 void CBGuiRviz::moveGripperClose()
 {
-  remote_reciever_.publishGripperClose();
+  std_msgs::Bool msg;
+  msg.data = true;
+  grasp_object_publisher_.publish(msg);
+  // remote_reciever_.publishGripperClose();
 }
 
 void CBGuiRviz::pclCapture()
@@ -443,7 +513,10 @@ void CBGuiRviz::pclCapture()
     ROS_INFO_STREAM_NAMED("gui", "pcl capture success");
   else
     ROS_ERROR_STREAM_NAMED("gui", "pcl capture failed");
-   remote_reciever_.publishPclCapture();
+  
+  std_msgs::Bool msg;
+  msg.data = true;
+  pcl_capture_publisher_.publish(msg);
 }
 
 void CBGuiRviz::pclReset()
@@ -457,7 +530,10 @@ void CBGuiRviz::pclReset()
     ROS_INFO_STREAM_NAMED("gui", "abb reset success");
   else
     ROS_ERROR_STREAM_NAMED("gui", "abb reset failed");
-  remote_reciever_.publishPclClear();
+
+  std_msgs::Bool msg;
+  msg.data = true;
+  pcl_clear_publisher_.publish(msg);
 }
 
 void CBGuiRviz::abbTrim()
@@ -476,17 +552,20 @@ void CBGuiRviz::abbReset()
     ROS_INFO_STREAM_NAMED("gui", "abb reset success");
   else
     ROS_ERROR_STREAM_NAMED("gui", "abb reset failed");
-  remote_reciever_.publishPclCapture();
+  
+  std_msgs::Bool msg;
+  msg.data = true;
+  pcl_capture_publisher_.publish(msg);
 }
 
-void CBGuiRviz::abbSave()
-{
-  std_srvs::Trigger srv;
-  if(abb_save_client_.call(srv))
-    ROS_INFO_STREAM_NAMED("gui", "abb save success");
-  else
-    ROS_ERROR_STREAM_NAMED("gui", "abb save failed");
-}
+// void CBGuiRviz::abbSave()
+// {
+//   std_srvs::Trigger srv;
+//   if(abb_save_client_.call(srv))
+//     ROS_INFO_STREAM_NAMED("gui", "abb save success");
+//   else
+//     ROS_ERROR_STREAM_NAMED("gui", "abb save failed");
+// }
 
 int CBGuiRviz::cvrgPlan()
 {
@@ -552,6 +631,13 @@ void CBGuiRviz::graspWand()
 {
   std_msgs::Bool msg;
   msg.data = true;
+  grasp_wand_publisher_.publish(msg);
+}
+
+void CBGuiRviz::putWand()
+{
+  std_msgs::Bool msg;
+  msg.data = false;
   grasp_wand_publisher_.publish(msg);
 }
 
@@ -646,6 +732,48 @@ void CBGuiRviz::moveZM()
   remote_reciever_.publishMoveZM();
 }
 
+void CBGuiRviz::moveJ1M()
+{
+  std_msgs::Bool msg;
+  msg.data = false;
+  j1_command_publisher_.publish(msg);
+}
+
+void CBGuiRviz::moveJ1P()
+{
+  std_msgs::Bool msg;
+  msg.data = true;
+  j1_command_publisher_.publish(msg);
+}
+
+void CBGuiRviz::moveJ4M()
+{
+  std_msgs::Bool msg;
+  msg.data = false;
+  j4_command_publisher_.publish(msg);
+}
+
+void CBGuiRviz::moveJ4P()
+{
+  std_msgs::Bool msg;
+  msg.data = true;
+  j4_command_publisher_.publish(msg);
+}
+
+void CBGuiRviz::moveJ6M()
+{
+  std_msgs::Bool msg;
+  msg.data = false;
+  j6_command_publisher_.publish(msg);
+}
+
+void CBGuiRviz::moveJ6P()
+{
+  std_msgs::Bool msg;
+  msg.data = true;
+  j6_command_publisher_.publish(msg);
+}
+
 void CBGuiRviz::apprRB1()
 {
   remote_reciever_.publishRB(1);
@@ -689,7 +817,7 @@ void CBGuiRviz::set_all_disabled()
   btn_pcl_reset_->setEnabled(false);
   btn_abb_trim_->setEnabled(false);
   btn_abb_reset_->setEnabled(false);
-  btn_abb_save_->setEnabled(false);
+  // btn_abb_save_->setEnabled(false);
 
   lb_appr_->setStyleSheet("background-color:rgb(186, 189, 182); color:gray;");
   lb_appr_pose_->setStyleSheet("color:gray;");
@@ -739,6 +867,8 @@ void CBGuiRviz::set_all_enabled()
   btn_abb_trim_->setEnabled(true);
   btn_abb_reset_->setEnabled(true);
 
+  lb_san_->setStyleSheet("background-color:rgb(186, 189, 182); color:black;");
+
   lb_appr_->setStyleSheet("background-color:rgb(186, 189, 182); color:black;");
   lb_appr_pose_->setStyleSheet("color:black;");
   lb_appr_dist_->setStyleSheet("color:black;");
@@ -773,10 +903,10 @@ void CBGuiRviz::set_all_enabled()
   btn_gripper_close_->setEnabled(true);
 }
 
-void CBGuiRviz::updateText()
-{
-  text_browser_->setText(QString::fromStdString(remote_reciever_.get_instruction()));
-}
+// void CBGuiRviz::updateText()
+// {
+//   text_browser_->setText(QString::fromStdString(remote_reciever_.get_instruction()));
+// }
 
 
 void CBGuiRviz::updateMBStatus()

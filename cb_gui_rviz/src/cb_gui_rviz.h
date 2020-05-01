@@ -82,7 +82,7 @@ public:
   void mb_status_cb(const std_msgs::Int32::ConstPtr&);
 public Q_SLOTS:
   
-  void updateText();
+  // void updateText();
 
   void updateMBStatus();
 
@@ -114,11 +114,13 @@ protected Q_SLOTS:
 
   void abbReset();
 
-  void abbSave();
+  // void abbSave();
 
   int cvrgPlan();
 
   void graspWand();
+
+  void putWand();
 
   void scanPlan();
 
@@ -137,6 +139,18 @@ protected Q_SLOTS:
   void moveZP();
 
   void moveZM();
+
+  void moveJ1M();
+
+  void moveJ1P();
+
+  void moveJ4M();
+
+  void moveJ4P();
+
+  void moveJ6M();
+
+  void moveJ6P();
 
   void apprRB1();
 
@@ -173,11 +187,13 @@ protected:
   QPushButton* btn_pcl_reset_;
   QPushButton* btn_abb_trim_;
   QPushButton* btn_abb_reset_;
-  QPushButton* btn_abb_save_;
+  // QPushButton* btn_abb_save_;
 
   QPushButton* btn_cvrg_plan_;
 
   QPushButton* btn_grasp_wand_;
+  QPushButton* btn_put_wand_;
+
   QPushButton* btn_scanning_plan_;
   QPushButton* btn_scanning_execute_;
 
@@ -195,6 +211,13 @@ protected:
   QPushButton* btn_move_zp_;
   QPushButton* btn_move_zm_;
 
+  QPushButton* btn_move_j1m_;
+  QPushButton* btn_move_j1p_;
+  QPushButton* btn_move_j4m_;
+  QPushButton* btn_move_j4p_;
+  QPushButton* btn_move_j6m_;
+  QPushButton* btn_move_j6p_;
+
   QRadioButton* rbtn_appr_1_;
   QRadioButton* rbtn_appr_2_;
   QRadioButton* rbtn_appr_3_;
@@ -205,13 +228,14 @@ protected:
   QSlider* slider_;
 
   QTimer* timer_;
-  QTextBrowser* text_browser_;
+  // QTextBrowser* text_browser_;
 
   QComboBox *combo_box_;
 
   QLabel* lb_mb_;
   QLabel* lb_mb_loc_;
   QLabel* lb_pcl_;
+  QLabel* lb_san_;
   QLabel* lb_appr_;
   QLabel* lb_appr_pose_;
   QLabel* lb_appr_dist_;
@@ -227,10 +251,18 @@ protected:
   ros::NodeHandle nh_;
 
   // Publisher
-  ros::Publisher grasp_wand_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/grasp_wand", 1);
-
   ros::Publisher scan_plan_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/scanning_plan", 1);
   ros::Publisher scan_execute_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/scanning_execute", 1);
+
+  ros::Publisher grasp_wand_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/grasp_wand", 1);
+  ros::Publisher grasp_object_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/grasp_object", 1);
+
+  ros::Publisher pcl_capture_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/pcl_capture", 1);
+  ros::Publisher pcl_clear_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/pcl_clear", 1);
+
+  ros::Publisher j1_command_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/j1", 1);
+  ros::Publisher j4_command_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/j4", 1);
+  ros::Publisher j6_command_publisher_ = nh_.advertise<std_msgs::Bool>("/cb_gui_moveit/j6", 1);
 
   // Subscriber
   ros::Subscriber mb_status_subscriber_;

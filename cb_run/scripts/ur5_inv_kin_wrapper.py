@@ -235,7 +235,7 @@ class ur5_inv_kin_wrapper(ur5):
 		drs.highlight_links = link_colors
 		self.robot_state_pub.publish(drs)
 
-		return valid, selected_inv_sol, rs
+		return valid, selected_inv_sol
 
 def main():
 	rospy.init_node('ur5_inv_kin_wrapper')

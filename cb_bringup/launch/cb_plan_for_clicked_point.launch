@@ -1,0 +1,7 @@
+<launch>
+
+    <!-- plan for clicked_point -->
+    <node name="cb_gui_moveit_execution" pkg="cb_run" type="cb_gui_moveit_approach_execution.py" output="screen"/>
+    <node name="cb_gui_im_execution" pkg="cb_run" type="waypoint_controls.py" output="screen"/> 
+
+</launch>

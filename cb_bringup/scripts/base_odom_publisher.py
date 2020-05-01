@@ -541,14 +541,14 @@ def odom_publisher():
     # publish the message
     odom_pub.publish(odom)
 
-    odom_broadcaster.sendTransform(
-       (x, y, 0.),
-       odom_quat,
-       current_time,
-       odom.child_frame_id,
-       # "base_footprint"
-       odom.header.frame_id
-    )
+    #odom_broadcaster.sendTransform(
+    #   (x, y, 0.),
+    #   odom_quat,
+    #   current_time,
+    #   odom.child_frame_id,
+    #   # "base_footprint"
+    #   odom.header.frame_id
+    #)
 
     # odom_broadcaster.sendTransform(
     #    (0, 0, 0.),

@@ -6,17 +6,18 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /MotionPlanning1/Planning Request1
+        - /realsense11
         - /TF1/Frames1
+        - /MotionPlanning1/Scene Geometry1
       Splitter Ratio: 0.5
-    Tree Height: 742
+    Tree Height: 337
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
     Expanded:
-      - /2D Pose Estimate1
       - /2D Nav Goal1
       - /Publish Point1
+      - /Approach Point1
     Name: Tool Properties
     Splitter Ratio: 0.588679016
   - Class: rviz/Views
@@ -28,7 +29,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: captured_pcl
+    SyncSource: Image
   - Class: cb_gui_rviz/CBGuiRviz
     Name: CBGuiRviz
 Toolbars:
@@ -96,96 +97,6 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: RGB8
       Decay Time: 0
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.00999999978
-      Style: Flat Squares
-      Topic: /realsense2/depth/color/points
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: RGB8
-      Decay Time: 0
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.00999999978
-      Style: Flat Squares
-      Topic: /realsense3/depth/color/points
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: RGB8
-      Decay Time: 0
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: stitched_pcl
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.00999999978
-      Style: Flat Squares
-      Topic: /pcl_fusion_node_color/pcl_fusion_node/fused_points
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: RGB8
-      Decay Time: 0
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
@@ -194,7 +105,7 @@ Visualization Manager:
       Min Intensity: 0
       Name: captured_pcl
       Position Transformer: XYZ
-      Queue Size: 10
+      Queue Size: 1
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.00999999978
@@ -234,36 +145,6 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: RGB8
-      Decay Time: 0
-      Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: trimmed_pcl
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.00999999978
-      Style: Flat Squares
-      Topic: /approximate_bb/cloud_trimmed
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: true
     - Class: rviz/InteractiveMarkers
       Enable Transparency: true
       Enabled: true
@@ -286,135 +167,343 @@ Visualization Manager:
     - Attached Body Color: 150; 50; 150
       Class: moveit_rviz_plugin/RobotState
       Collision Enabled: false
-      Enabled: false
+      Enabled: true
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        bare_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_imu_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_laser_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        battery_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_profile_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ee_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        forearm_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        inertial_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        kinect1_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        kinect1_frame_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        kinect1_head_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        kinect1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        kinect1_neck_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        left_inner_finger:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_inner_finger_pad:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_inner_knuckle:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_outer_finger:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_outer_knuckle:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        real_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        real_ee_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_bottom_screw_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_color_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_color_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_depth_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_infra1_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_infra1_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_infra2_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_infra2_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        realsense2_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense2_bottom_screw_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense2_color_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense2_color_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense2_depth_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense2_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense2_infra1_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense2_infra1_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense2_infra2_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense2_infra2_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        realsense2_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        realsense2_mount_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rear_left_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_right_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_inner_finger:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_inner_finger_pad:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_inner_knuckle:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_outer_finger:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_outer_knuckle:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        robotiq_arg2f_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        robotiq_ee:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        shoulder_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tcp_gripper_closed:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        tcp_gripper_open:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        tool0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        upper_arm_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        uv_light_center:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        wrist_1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wrist_2_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wrist_3_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: RobotState
       Robot Alpha: 0.200000003
       Robot Description: robot_description
       Robot State Topic: /inv_kin_sol
       Show All Links: true
       Show Highlights: true
-      Value: false
+      Value: true
       Visual Enabled: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: Intensity
-      Decay Time: 0
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.00999999978
-      Style: Flat Squares
-      Topic: /ptcloud1
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: Intensity
-      Decay Time: 0
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.00999999978
-      Style: Flat Squares
-      Topic: /ptcloud2
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: Intensity
-      Decay Time: 0
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.00999999978
-      Style: Flat Squares
-      Topic: /ptcloud3
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
-    - Class: rviz/MarkerArray
-      Enabled: false
-      Marker Topic: /mesh1
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Queue Size: 100
-      Value: false
-    - Class: rviz/MarkerArray
-      Enabled: false
-      Marker Topic: /sim_scanner
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Queue Size: 100
-      Value: false
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /path
       Name: MarkerArray
       Namespaces:
-        1: true
+        {}
       Queue Size: 100
       Value: true
+    - Class: rviz/TF
+      Enabled: false
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        {}
+      Update Interval: 0
+      Value: false
+    - Class: rviz/Axes
+      Enabled: false
+      Length: 1
+      Name: Axes
+      Radius: 0.100000001
+      Reference Frame: <Fixed Frame>
+      Value: false
     - Acceleration_Scaling_Factor: 1
       Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
@@ -772,7 +861,7 @@ Visualization Manager:
       Planning Scene Topic: move_group/monitored_planning_scene
       Robot Description: robot_description
       Scene Geometry:
-        Scene Alpha: 0.899999976
+        Scene Alpha: 1
         Scene Color: 50; 230; 50
         Scene Display Time: 0.200000003
         Show Scene Geometry: false
@@ -1084,96 +1173,41 @@ Visualization Manager:
         Show Robot Visual: true
       Value: true
       Velocity_Scaling_Factor: 1
-    - Class: rviz/TF
-      Enabled: false
-      Frame Timeout: 15
-      Frames:
-        All Enabled: false
-      Marker Scale: 1
-      Name: TF
-      Show Arrows: true
-      Show Axes: true
-      Show Names: true
-      Tree:
-        {}
-      Update Interval: 0
-      Value: false
-    - Class: rviz/Axes
-      Enabled: false
-      Length: 1
-      Name: Axes
-      Radius: 0.100000001
-      Reference Frame: pcl
-      Value: false
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: RGB8
-      Decay Time: 0
+    - Class: rviz/Image
       Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.00999999978
-      Style: Flat Squares
-      Topic: /cloud_pcd
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
+      Image Topic: /cam1/usb_cam/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: compressed
+      Unreliable: true
       Value: true
-    - Alpha: 0.699999988
-      Class: rviz/Map
-      Color Scheme: map
-      Draw Behind: false
+    - Class: rviz/Image
       Enabled: true
-      Name: Map
-      Topic: /map
-      Unreliable: false
-      Use Timestamp: false
+      Image Topic: /cam2/usb_cam/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: compressed
+      Unreliable: true
       Value: true
-    - Alpha: 1
-      Axes Length: 1
-      Axes Radius: 0.100000001
-      Class: rviz/PoseWithCovariance
-      Color: 255; 25; 0
-      Covariance:
-        Orientation:
-          Alpha: 0.5
-          Color: 255; 255; 127
-          Color Style: Unique
-          Frame: Local
-          Offset: 1
-          Scale: 1
-          Value: true
-        Position:
-          Alpha: 0.300000012
-          Color: 204; 51; 204
-          Scale: 1
-          Value: true
-        Value: true
+    - Class: rviz/Image
       Enabled: true
-      Head Length: 0.300000012
-      Head Radius: 0.100000001
-      Name: PoseWithCovariance
-      Shaft Length: 1
-      Shaft Radius: 0.0500000007
-      Shape: Axes
-      Topic: /rtabmap/localization_pose
-      Unreliable: false
+      Image Topic: /cam3/usb_cam/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: compressed
+      Unreliable: true
       Value: true
   Enabled: true
   Global Options:
@@ -1185,55 +1219,55 @@ Visualization Manager:
   Tools:
     - Class: rviz/Interact
       Hide Inactive Objects: true
-    - Class: rviz/MoveCamera
-    - Class: rviz/Select
-    - Class: rviz/FocusCamera
     - Class: rviz/Measure
-    - Class: rviz/SetInitialPose
-      Topic: /initialpose
     - Class: rviz/SetGoal
       Topic: /move_base_simple/goal
     - Class: rviz/PublishPoint
       Single click: true
       Topic: /clicked_point
+    - Class: cb_gui_rviz/ApproachPoint
+      Single click: true
     - Class: cb_gui_rviz/KeyTool
+    - Class: cb_gui_rviz/EStop
   Value: true
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.23787141
+      Distance: 2.19257355
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.0874098092
-        Y: -0.335369915
-        Z: 0.737026811
+        X: -0.0494586937
+        Y: -0.475729078
+        Z: 1.03886926
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.409797132
+      Pitch: 0.714796901
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.2863121
+      Yaw: 0.586358547
     Saved: ~
 Window Geometry:
   CBGuiRviz:
     collapsed: false
   Displays:
     collapsed: false
-  Height: 1065
+  Height: 1056
   Hide Left Dock: false
-  Hide Right Dock: true
+  Hide Right Dock: false
+  Image:
+    collapsed: false
   MotionPlanning:
-    collapsed: true
+    collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd000000040000000000000178000003e3fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c006900640065007201000000280000004a0000004a00fffffffc0000007800000393000003930100001dfa000000020100000003fb0000001200430042004700750069005200760069007a0100000000ffffffff0000017800fffffffb00000012004d004d004700750069005200760069007a0000000000ffffffff0000000000000000fb000000100044006900730070006c0061007900730100000000000001780000016a00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff000000000000000000000001000002ad000003e3fc0200000005fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670000000028000003e30000018300fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670000000028000003da0000000000000000fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000028000003da000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b20000000000000000000000020000073f0000018efc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073f00000183fc0100000002fb0000000800540069006d006500000000000000073f0000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000005c1000003e300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000017b000003dafc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c006900640065007200000000280000004a0000004a00fffffffc00000028000003da000003910100001dfa000000000100000003fb0000001200430042004700750069005200760069007a0100000000ffffffff0000017b00fffffffb00000012004d004d004700750069005200760069007a0000000000ffffffff0000000000000000fb000000100044006900730070006c0061007900730100000000000001780000016a00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff00000000000000000000000100000160000003dafc020000000afb0000000a0049006d00610067006501000000280000012d0000001600fffffffb0000000a0049006d006100670065010000015b0000018a0000001600fffffffb0000000a0049006d00610067006501000002eb000001170000001600fffffffb0000000a0049006d00610067006501000002e50000011d0000000000000000fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000021a0000020b0000018300fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670100000028000003e30000000000000000fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670000000028000003da0000000000000000fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000028000003da000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b20000000000000000000000020000073f0000018efc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073f00000183fc0100000002fb0000000800540069006d006500000000000000073f0000030000fffffffb0000000800540069006d0065010000000000000450000000000000000000000458000003da00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:

@@ -72,8 +72,8 @@ public:
     cmd_vel_publisher_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
 
     record_publisher_ = nh_.advertise<std_msgs::Bool>("pcl_record", 1);
-    capture_publisher_ = nh_.advertise<std_msgs::Bool>("pcl_capture", 1);
-    clear_publisher_ = nh_.advertise<std_msgs::Bool>("pcl_clear", 1);
+    // capture_publisher_ = nh_.advertise<std_msgs::Bool>("pcl_capture", 1);
+    // clear_publisher_ = nh_.advertise<std_msgs::Bool>("pcl_clear", 1);
 
     pick_approach_plan_publisher_ = nh_.advertise<std_msgs::Bool>("pick_approach_plan", 1);
     pick_approach_execute_publisher_ = nh_.advertise<std_msgs::Bool>("pick_approach_execute", 1);
@@ -166,23 +166,23 @@ public:
     record_publisher_.publish(msg);
   }
 
-  void publishPclCapture()
-  {
-    ROS_DEBUG_STREAM_NAMED("gui", "PclCapture");
+  // void publishPclCapture()
+  // {
+  //   ROS_DEBUG_STREAM_NAMED("gui", "PclCapture");
     
-    std_msgs::Bool msg;
-    msg.data = true;
-    capture_publisher_.publish(msg);
-  }
+  //   std_msgs::Bool msg;
+  //   msg.data = true;
+  //   capture_publisher_.publish(msg);
+  // }
 
-  void publishPclClear()
-  {
-  	ROS_DEBUG_STREAM_NAMED("gui", "PclClear");
+  // void publishPclClear()
+  // {
+  // 	ROS_DEBUG_STREAM_NAMED("gui", "PclClear");
     
-    std_msgs::Bool msg;
-    msg.data = true;
-    clear_publisher_.publish(msg);
-  }
+  //   std_msgs::Bool msg;
+  //   msg.data = true;
+  //   clear_publisher_.publish(msg);
+  // }
 
   void publishPickApproachPlan()
   {
@@ -407,8 +407,8 @@ protected:
   ros::Publisher cmd_vel_publisher_;
   
   ros::Publisher record_publisher_;
-  ros::Publisher capture_publisher_;
-  ros::Publisher clear_publisher_;
+  // ros::Publisher capture_publisher_;
+  // ros::Publisher clear_publisher_;
   
   ros::Publisher pick_approach_plan_publisher_;
   ros::Publisher pick_approach_execute_publisher_;
