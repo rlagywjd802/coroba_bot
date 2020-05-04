@@ -29,6 +29,8 @@ DXYZ = 0.02
 DJ = m.pi/12.0
 JOINTS = ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint', 
             'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']
+
+initial_joint_for_retreat = d2r([-158.57, -61.82, -100.14, -95.34, 72.82, -247.12])
 # initial_joint_for_capture = d2r([-180.00, -74.67, -91.72, -82.35, 89.65, -270.21])
 initial_joint_for_capture = d2r([-180.00, -74.67, -91.72, -65.57, 89.65, -270.21])
 initial_joint_for_scan = d2r([-180.00, -74.66, -91.72, -103.59, 89.65, -270.21])
@@ -348,6 +350,7 @@ class UR5MoveGroupGUI():
 
     def plan_for_joint_target(self, joint):
         rospy.loginfo("plan to joint target| started")
+        self.group.set_start_state_to_current_state()
         self.group.set_joint_value_target(joint)
         plan = self.group.plan()
         self.group.clear_pose_targets()
@@ -356,6 +359,7 @@ class UR5MoveGroupGUI():
 
     def plan_for_pose_target(self, pose):
         rospy.loginfo("plan to pose target| started")
+        self.group.set_start_state_to_current_state()
         self.group.set_pose_target(pose)
         plan = self.group.plan()
         self.group.clear_pose_targets()
@@ -365,6 +369,7 @@ class UR5MoveGroupGUI():
     def execute_plan(self, plan):
         rospy.loginfo("execute plan| started")
         self.group.execute(plan, wait=True)
+        # print self.group.execute(plan, wait=False)
         # rospy.sleep(5)
         rospy.loginfo("execute plan| finished")
 
@@ -703,7 +708,7 @@ class UR5MoveGroupGUI():
         if self.pick_approach_plan is not None:
             self.remove_imarker_pub.publish(Bool(True))
             self.execute_plan(self.pick_approach_plan)
-            self.pre_grasp_joint = self.group.get_current_joint_values(self.scanning_plan2.joint_trajectory.points[0].positions)
+            self.pre_grasp_joint = self.group.get_current_joint_values()
             rospy.loginfo("pick_approach_execute done")
 
 
@@ -711,10 +716,12 @@ class UR5MoveGroupGUI():
         '''
         grasp joint -> pre-grasp joint -> initial joint
         '''
+        print self.pre_grasp_joint
         if self.pre_grasp_joint is not None:
             self.ur5_inv.publish_state(-1)
 
-            self.pick_retreat_plan = self.plan_for_joint_target(initial_joint)
+            self.pick_retreat_plan = self.plan_for_joint_target(initial_joint_for_retreat)
+            print self.pick_retreat_plan
             # if self.pick_retreat_step == 0:
             #     self.pick_retreat_plan = self.plan_for_joint_target(self.pre_grasp_joint)
             #     rospy.loginfo("pick retreat plan | step 0")
